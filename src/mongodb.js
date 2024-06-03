@@ -1,7 +1,7 @@
 const mongoose =require("mongoose");
 
 
-mongoose.connect('mongodb://localhost:27017/dbconnect', {
+mongoose.connect("mongodb://localhost:27017/dbconnect", {
   useNewUrlParser: true,
   useUnifiedTopology: true,
 }).then(() => {
@@ -25,6 +25,6 @@ const LoginSchema = new mongoose.Schema({
     }
 });
 
-const LoginModel = mongoose.model('logins', LoginSchema);
+const LoginModel = mongoose.model('Login', LoginSchema);
 
 module.exports = LoginModel;
