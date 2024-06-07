@@ -22,7 +22,7 @@ const getMapData = async (coords) => {
   }
 };
 
-router.get('/', async (req, res) => {
+router.get('/home', async (req, res) => {
   const { lat, lng, type = 'restaurants' } = req.query;
   if (!lat || !lng) {
     return res.status(400).json({ message: 'Latitude and Longitude are required' });

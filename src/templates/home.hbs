@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Home</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f5f5f5;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #fff;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            border-radius: 5px;
+            margin-top: 20px;
+        }
+
+        h1 {
+            text-align: center;
+        }
+
+        form {
+            margin-bottom: 20px;
+        }
+
+        form p {
+            margin-bottom: 5px;
+        }
+
+        input[type="text"],
+        input[type="date"],
+        select,
+        button {
+            width: calc(50% - 5px);
+            margin-bottom: 10px;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            box-sizing: border-box;
+            font-size: 16px;
+        }
+
+        button {
+            cursor: pointer;
+            background-color: #007bff;
+            color: #fff;
+            border: none;
+            transition: background-color 0.3s ease;
+        }
+
+        button:hover {
+            background-color: #0056b3;
+        }
+
+        .weather-container {
+            background-color: #f9f9f9;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+
+        .weather-info {
+            margin-bottom: 10px;
+        }
+
+        .flight-offer {
+            margin-bottom: 20px;
+            padding: 20px;
+            background-color: #f9f9f9;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+
+        .submit-container {
+            display: flex;
+            justify-content: center;
+            margin-top: 20px;
+        }
+
+        .itinerary {
+            margin-top: 20px;
+            padding-top: 10px;
+            border-top: 1px solid #ddd;
+        }
+
+        ul {
+            margin: 0;
+            padding: 0;
+            list-style: none;
+        }
+
+        li {
+            margin-bottom: 10px;
+        }
+    #map {
+      height: 400px;
+      width: 100%;
+    }
+    #places {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-top: 20px;
+    }
+    .place-card {
+      border: 1px solid #ccc;
+      padding: 10px;
+      width: 200px;
+      text-align: center;
+    }
+    .place-card img {
+      max-width: 100%;
+      height: auto;
+    }
+    .marker-content {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      width: 200px;
+      background-color: white;
+      border: 1px solid #ccc;
+      padding: 10px;
+      border-radius: 8px;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    }
+    .marker-image {
+      max-width: 100%;
+      height: 200px;
+      border-radius: 8px;
+    }
+    .marker-info {
+      text-align: left;
+    }
+    .marker-name {
+      font-size: 16px;
+      font-weight: bold;
+      margin: 10px 0;
+    }
+    .marker-rating {
+      font-size: 14px;
+      color: #888;
+      margin: 5px 0;
+    }
+    .marker-rating .star {
+      color: gold;
+      font-size: 18px;
+    }
+    .marker-address {
+      font-size: 14px;
+      color: #666;
+      margin: 5px 0;
+    }
+    .marker-links {
+      display: flex;
+      justify-content: space-around;
+      width: 100%;
+      margin-top: 10px;
+    }
+    .marker-links a {
+      color: #007BFF;
+      text-decoration: none;
+    }
+    .marker-links a:hover {
+      text-decoration: underline;
+    }
+    </style>
+</head>
+<body>
+    <div class="container">
+    <h1>Flight Search and Weather Information</h1>
+    <form action="/home" method="POST">
+        <p>Flight search</p>
+        <input type="text" name="originLocationCode" placeholder="Your location">
+        <input type="text" name="destinationLocationCode" placeholder="Destination">
+        
+        <p>Departure and return dates</p>
+        <input type="date" name="departureDate" placeholder="Departure date">
+        <input type="date" name="returnDate" placeholder="Return date">
+
+        <p>Adults</p>
+        <select name="adults" id="adultsDropdown"></select>
+        
+        <p>Children</p>
+        <select name="children" id="childrenDropdown"></select>
+
+        <p>Infants</p>
+        <select name="infants" id="infantsDropdown"></select>
+
+        <p>Travel class</p>
+        <select name="travelClass">
+            <option value="ECONOMY">Economy</option>
+            <option value="PREMIUM_ECONOMY">Premium Economy</option>
+            <option value="BUSINESS">Business</option>
+            <option value="FIRST">First</option>
+        </select>
+        
+        <p>Non-stop flights</p>
+        <select name="nonStop" placeholder="No transit flights ">
+            <option value="true">Yes</option>
+            <option value="false">No</option>
+        </select>
+    
+        <p>Budget</p>
+        <input type="text" name="maxPrice" placeholder="Budget">
+        <div class="submit-container">
+            <button type="submit">Submit</button>
+        </div>
+        
+    </form>
+
+    {{!-- <pre>{{data}}</pre> --}}
+    <div class="weather-data">
+        <h2>Weather Data</h2>
+        <p>Weather Temperature: {{weatherdata.main.temp}}°C</p>
+        <p>Maximum Temperature: {{weatherdata.main.temp_min}}°C</p>
+        <p>Minimum Temperature: {{weatherdata.main.temp_max}}°C</p>
+        <p>Location: {{weatherdata.name}}, {{weatherdata.sys.country}}</p>
+        <p>Rain Description: {{weatherdata.weather.[0].description}}</p>
+    </div>
+
+    <form id="searchForm">
+    <input type="text" id="searchInput" placeholder="Enter a location">
+    <select id="placeType">
+      <option value="restaurants">Restaurants</option>
+      <option value="hotels">Hotels</option>
+      <option value="attractions">Attractions</option>
+    </select>
+    <button type="submit">Search</button>
+  </form>
+  <div id="map"></div>
+  <div id="places"></div>
+
+  <script src="script.js"></script>
+  <script>
+    const script = document.createElement('script');
+    script.src = `https://maps.googleapis.com/maps/api/js?key=AIzaSyCmgZao1Qy8H168s2V-lc__PHr0oijVYeI&callback=initMap&libraries=places`;
+    script.setAttribute('async', '');
+    script.setAttribute('defer', '');
+    document.head.appendChild(script);
+  </script>
+
+    {{#each data}}
+        <div class="flight-offer">
+            <h2>Flight Offer {{@index}}</h2>
+            <p>Price: {{price.currency}} {{price.total}}</p>
+            <p>Number of Bookable Seats: {{numberOfBookableSeats}}</p>
+
+            <!-- Render itineraries -->
+            {{#each itineraries}}
+                <div class="itinerary">
+                    <h3>Itinerary {{@index}}</h3>
+                    <p>Duration: {{duration}}</p>
+                    <ul>
+                        <!-- Render segments -->
+                        {{#each segments}}
+                            <li>
+                                <p>Departure: {{getCountryNameFromIata departure.iataCode}} ({{departure.at}})</p>
+                                <p>Arrival: {{getCountryNameFromIata arrival.iataCode}} ({{arrival.at}})</p>
+                                <p>Carrier: {{carrierCode}}</p>
+                                <p>Flight Number: {{number}}</p>
+                                <p>Aircraft: {{aircraft.code}}</p>
+                            </li>
+                        {{/each}}
+                    </ul>
+                </div>
+            {{/each}}
+        </div>
+    {{/each}}
+    </div>
+    
+    <script>
+        function generateOptions(selectElement, start, end) {
+            for (let i = start; i <= end; i++) {
+                const option = document.createElement("option");
+                option.value = i;
+                option.textContent = i;
+                selectElement.appendChild(option);
+            }
+        }
+
+        generateOptions(document.getElementById("adultsDropdown"), 1, 10);
+        generateOptions(document.getElementById("childrenDropdown"), 0, 5);
+        generateOptions(document.getElementById("infantsDropdown"), 0, 5);
+    </script>
+</body>
+</html>
