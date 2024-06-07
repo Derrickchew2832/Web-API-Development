@@ -1,0 +1,17 @@
+{
+  "name": "travel_planner",
+  "version": "1.0.0",
+  "description": "",
+  "main": "src/api/index.js",
+  "scripts": {
+    "start": "node src/api/index.js"
+  },
+  "dependencies": {
+    "axios": "^0.21.1",
+    "dotenv": "^16.4.5",
+    "ejs": "^3.1.10",
+    "express": "^4.19.2"
+  },
+  "author": "",
+  "license": "ISC"
+}
