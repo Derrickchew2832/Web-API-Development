@@ -180,6 +180,14 @@ app.get('/location', (req, res) => {
   res.sendFile(path.join(__dirname, 'public', 'index.html'));
 });
 
+app.use(express.static(path.join(__dirname, 'src', 'templates')));
+
+app.use('/api/map', require('./src/components/Map'));
+
+app.get('*', (req, res) => {
+    res.sendFile(path.join(__dirname, 'public', 'index.html'));
+});
+
 // Start the server
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
