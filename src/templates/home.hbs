@@ -176,10 +176,11 @@
 <body>
     <div class="container">
     <h1>Flight Search and Weather Information</h1>
-    <form action="/home" method="POST">
+    <form name="searchForm" action="/home" method="POST">
         <p>Flight search</p>
         <input type="text" name="originLocationCode" placeholder="Your location">
-        <input type="text" name="destinationLocationCode" placeholder="Destination">
+        <input type="text" name="searchInput" placeholder="Destination">
+        <button type="button" onclick="redirectToLocations()">Go to Locations</button>
         
         <p>Departure and return dates</p>
         <input type="date" name="departureDate" placeholder="Departure date">
@@ -210,10 +211,19 @@
     
         <p>Budget</p>
         <input type="text" name="maxPrice" placeholder="Budget">
+
+        <select id="placeType">
+          <option value="restaurants">Restaurants</option>
+          <option value="hotels">Hotels</option>
+          <option value="attractions">Attractions</option>
+        </select>
+        
+
         <div class="submit-container">
             <button type="submit">Submit</button>
         </div>
-        
+
+
     </form>
 
     {{!-- <pre>{{data}}</pre> --}}
@@ -225,18 +235,6 @@
         <p>Location: {{weatherdata.name}}, {{weatherdata.sys.country}}</p>
         <p>Rain Description: {{weatherdata.weather.[0].description}}</p>
     </div>
-
-    <form id="searchForm">
-    <input type="text" id="searchInput" placeholder="Enter a location">
-    <select id="placeType">
-      <option value="restaurants">Restaurants</option>
-      <option value="hotels">Hotels</option>
-      <option value="attractions">Attractions</option>
-    </select>
-    <button type="submit">Search</button>
-  </form>
-  <div id="map"></div>
-  <div id="places"></div>
 
   <script src="script.js"></script>
   <script>
@@ -277,6 +275,9 @@
     </div>
     
     <script>
+        function redirectToLocations() {
+          window.location.href = '/location'; // Redirect to /location route
+    }
         function generateOptions(selectElement, start, end) {
             for (let i = start; i <= end; i++) {
                 const option = document.createElement("option");

@@ -131,7 +131,7 @@ app.get('/home', async (req, res) => {
 app.post('/home', async (req, res) => {
   const data = {
     originLocationCode: req.body.originLocationCode,
-    destinationLocationCode: req.body.destinationLocationCode,
+    destinationLocationCode: req.body.searchInput,
     departureDate: req.body.departureDate,
     returnDate: req.body.returnDate,
     adults: req.body.adults,
@@ -154,7 +154,7 @@ app.post('/home', async (req, res) => {
     );
 
     const accessToken = tokenResponse.data.access_token;
-    const countryName = iataToCountry[data.originLocationCode] || 'Unknown';
+    const countryName = iataToCountry[data.destinationLocationCode] || 'Unknown';
     const weatherResponse = await axios.post(`https://api.openweathermap.org/data/2.5/weather?q=${countryName}&appid=${WeatherAPI_KEY}&units=metric`);
     const airplaneResponse = await axios.get(
       `https://test.api.amadeus.com/v2/shopping/flight-offers?originLocationCode=${data.originLocationCode}&destinationLocationCode=${data.destinationLocationCode}&departureDate=${data.departureDate}&returnDate=${data.returnDate}&adults=${data.adults}&children=${data.children}&infants=${data.infants}&travelClass=${data.travelClass}&nonStop=${data.nonStop}&currencyCode=MYR&maxPrice=${data.maxPrice}&max=10`,
