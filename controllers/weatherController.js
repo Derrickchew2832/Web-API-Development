@@ -27,7 +27,7 @@ const getWeather = async (req, res) => {
         longitude: lng,
         current_weather: true,
         daily: 'temperature_2m_max,temperature_2m_min,precipitation_sum',
-        timezone: 'Europe/Berlin'
+        timezone: 'Asia/Singapore'
       }
     });
 

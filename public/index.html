@@ -6,8 +6,9 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Travel Planner</title>
   <link rel="stylesheet" href="styles.css">
-  <script
-    src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCmgZao1Qy8H168s2V-lc__PHr0oijVYeI&libraries=places"></script>
+  <script async defer
+    src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCmgZao1Qy8H168s2V-lc__PHr0oijVYeI&libraries=places,marker&callback=initMap">
+  </script>
   <script>
     // Check if the user is authenticated
     if (!localStorage.getItem('token')) {
@@ -15,7 +16,8 @@
       window.location.href = '/login.html';
     }
 
-    document.addEventListener('DOMContentLoaded', () => {
+    // Initialize and add the map
+    function initMap() {
       document.getElementById('destinationForm').addEventListener('submit', async (e) => {
         e.preventDefault();
 
@@ -39,6 +41,7 @@
 
           const data = await response.json();
           if (response.ok) {
+            console.log("Map Data:", data.map);
             displayMap(data.map);
             displayAttractions(data.attractions);
           } else {
@@ -51,17 +54,37 @@
       });
 
       function displayMap(mapData) {
-        const map = new google.maps.Map(document.getElementById('map'), {
+        const mapOptions = {
           center: { lat: mapData.results[0].geometry.location.lat, lng: mapData.results[0].geometry.location.lng },
-          zoom: 12
-        });
+          zoom: 12,
+          mapId: 'd6c2462d6114c70' // Your Map ID
+        };
+
+        console.log("Map Options:", mapOptions);
+
+        const map = new google.maps.Map(document.getElementById('map'), mapOptions);
 
         mapData.results.forEach(place => {
-          new google.maps.Marker({
-            position: { lat: place.geometry.location.lat, lng: place.geometry.location.lng },
-            map: map,
-            title: place.formatted_address
-          });
+          const content = document.createElement('div');
+          content.innerHTML = `<strong>${place.formatted_address}</strong>`;
+          content.style.padding = '5px';
+          content.style.backgroundColor = 'white';
+          content.style.border = '1px solid black';
+
+          console.log('Creating AdvancedMarkerElement for:', place.formatted_address);
+
+          try {
+            const marker = new google.maps.marker.AdvancedMarkerElement({
+              position: { lat: place.geometry.location.lat, lng: place.geometry.location.lng },
+              map: map,
+              title: place.formatted_address,
+              content: content // Use a DOM element for the content
+            });
+
+            console.log('Marker created successfully:', marker);
+          } catch (error) {
+            console.error('Error creating AdvancedMarkerElement for place:', place, error);
+          }
         });
       }
 
@@ -71,7 +94,10 @@
         const container = document.createElement('div');
         container.className = 'attraction-cards';
 
-        attractions.forEach(attraction => {
+        // Filter attractions that have sufficient data
+        const validAttractions = attractions.filter(attraction => attraction.photo && attraction.name && attraction.description);
+
+        validAttractions.forEach(attraction => {
           const card = document.createElement('div');
           card.className = 'card';
 
@@ -120,7 +146,7 @@
         localStorage.setItem('selectedAttractions', JSON.stringify(selectedAttractions));
         window.location.href = '/details.html';
       }
-    });
+    }
   </script>
 </head>
 
