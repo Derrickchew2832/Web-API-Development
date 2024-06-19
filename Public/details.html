@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Travel Details</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+    }
+    form {
+      margin-bottom: 20px;
+    }
+    label {
+      display: block;
+      margin-top: 10px;
+    }
+    input,
+    select,
+    button {
+      margin-top: 5px;
+    }
+  </style>
+</head>
+<body>
+  <h1>Travel Details</h1>
+  <div id="selectedAttractions"></div>
+  <form id="travelDetailsForm">
+    <label for="originLocationCode">Departure City (IATA Code):</label>
+    <input type="text" id="originLocationCode" name="originLocationCode" required>
+
+    <label for="destinationLocationCode">Destination City (IATA Code):</label>
+    <input type="text" id="destinationLocationCode" name="destinationLocationCode" required>
+
+    <label for="departureDate">Departure Date (YYYY-MM-DD):</label>
+    <input type="date" id="departureDate" name="departureDate" required>
+
+    <label for="returnDate">Return Date (YYYY-MM-DD):</label>
+    <input type="date" id="returnDate" name="returnDate">
+
+    <label for="adults">Number of Adults:</label>
+    <input type="number" id="adults" name="adults" required min="1">
+
+    <label for="children">Number of Children:</label>
+    <input type="number" id="children" name="children" min="0">
+
+    <label for="infants">Number of Infants:</label>
+    <input type="number" id="infants" name="infants" min="0">
+
+    <label for="travelClass">Class Type:</label>
+    <select id="travelClass" name="travelClass" required>
+      <option value="ECONOMY">Economy</option>
+      <option value="PREMIUM_ECONOMY">Premium Economy</option>
+      <option value="BUSINESS">Business</option>
+      <option value="FIRST">First Class</option>
+    </select>
+
+    <label for="tripType">Trip Type:</label>
+    <select id="tripType" name="tripType" required>
+      <option value="one-way">One Way</option>
+      <option value="round-trip">Round Trip</option>
+    </select>
+
+    <label for="nonStop">Non-Stop Flights Only:</label>
+    <select id="nonStop" name="nonStop">
+      <option value="false">No</option>
+      <option value="true">Yes</option>
+    </select>
+
+    <label for="currencyCode">Preferred Currency:</label>
+    <input type="text" id="currencyCode" name="currencyCode" placeholder="e.g., USD">
+
+    <label for="maxPrice">Maximum Price per Traveler:</label>
+    <input type="number" id="maxPrice" name="maxPrice">
+
+    <label for="max">Maximum Number of Offers:</label>
+    <input type="number" id="max" name="max" value="250" required>
+
+    <button type="submit">Submit</button>
+  </form>
+  <div id="summary"></div>
+
+  <script type="module">
+  
+  import iataToCountry from '../controllers/iataToCountry.js';
+
+    document.addEventListener('DOMContentLoaded', () => {
+      const selectedAttractions = JSON.parse(localStorage.getItem('selectedAttractions')) || [];
+      const attractionsDiv = document.getElementById('selectedAttractions');
+      attractionsDiv.innerHTML = '<h2>Selected Attractions:</h2>';
+      selectedAttractions.forEach(attraction => {
+        const p = document.createElement('p');
+        p.textContent = attraction;
+        attractionsDiv.appendChild(p);
+      });
+
+      document.getElementById('travelDetailsForm').addEventListener('submit', async (e) => {
+        e.preventDefault();
+
+        const originLocationCode = document.getElementById('originLocationCode').value;
+        const destinationLocationCode = document.getElementById('destinationLocationCode').value;
+        const departureDate = document.getElementById('departureDate').value;
+        const returnDate = document.getElementById('returnDate').value;
+        const adults = document.getElementById('adults').value;
+        const children = document.getElementById('children').value || 0;
+        const infants = document.getElementById('infants').value || 0;
+        const travelClass = document.getElementById('travelClass').value;
+        const tripType = document.getElementById('tripType').value;
+        const nonStop = document.getElementById('nonStop').value === 'true';
+        const currencyCode = document.getElementById('currencyCode').value;
+        const maxPrice = document.getElementById('maxPrice').value;
+        const max = document.getElementById('max').value;
+
+        
+        const destinationCity = iataToCountry[destinationLocationCode.toUpperCase()] || destinationLocationCode;
+
+        const details = {
+          departure: originLocationCode,
+          destination: destinationLocationCode,
+          departureDate,
+          returnDate: tripType === 'round-trip' ? returnDate : undefined,
+          numPeople: adults,
+          children,
+          infants,
+          classType: travelClass,
+          nonStop,
+          currencyCode,
+          maxPrice,
+          max
+        };
+
+        const token = localStorage.getItem('token'); // Retrieve the token
+
+        console.log('Token:', token); // Log the token
+        console.log('Request Body:', details); // Log the request body
+
+        try {
+          // Fetch flight data
+          const flightResponse = await fetch('http://localhost:3000/api/flights/search', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              'x-auth-token': token // Include the token in the header
+            },
+            body: JSON.stringify(details)
+          });
+
+          if (!flightResponse.ok) {
+            const errorData = await flightResponse.text();
+            console.error('Error fetching flight data:', errorData);
+            throw new Error(`Error fetching flight data: ${errorData}`);
+          }
+
+          const flightData = await flightResponse.json();
+
+          // Fetch weather data
+          const weatherResponse = await fetch('http://localhost:3000/api/weather/get', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              'x-auth-token': token // Include the token in the header
+            },
+            body: JSON.stringify({ cityName: destinationCity })
+          });
+
+          if (!weatherResponse.ok) {
+            const errorData = await weatherResponse.text();
+            console.error('Error fetching weather data:', errorData);
+            throw new Error(`Error fetching weather data: ${errorData}`);
+          }
+
+          const weatherData = await weatherResponse.json();
+
+          displaySummary(flightData, weatherData);
+        } catch (error) {
+          console.error('Error fetching flight or weather data:', error.message);
+          alert(`Error fetching flight or weather data: ${error.message}`);
+        }
+      });
+    });
+
+    function displaySummary(flightData, weatherData) {
+      const summaryDiv = document.getElementById('summary');
+      summaryDiv.innerHTML = '<h2>Summary:</h2>';
+      summaryDiv.innerHTML += `<h3>Flight Results:</h3><pre>${JSON.stringify(flightData, null, 2)}</pre>`;
+      summaryDiv.innerHTML += `<h3>Weather Results:</h3><pre>${JSON.stringify(weatherData, null, 2)}</pre>`;
+    }
+  </script>
+</body>
+</html>
