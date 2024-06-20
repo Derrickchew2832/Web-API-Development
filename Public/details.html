@@ -7,98 +7,161 @@
   <style>
     body {
       font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+      background-color: #f0f0f0;
     }
-    form {
+    .container {
+      max-width: 1200px;
+      margin: 20px auto;
+      padding: 20px;
+      background-color: white;
+      border-radius: 8px;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    }
+    .attraction-cards {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
       margin-bottom: 20px;
+    }
+    .card {
+      background: white;
+      border: 1px solid #ddd;
+      border-radius: 5px;
+      padding: 10px;
+      text-align: center;
+    }
+    .card img {
+      max-width: 100%;
+      height: auto;
+      border-radius: 5px;
+    }
+    #travelDetailsForm {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 20px;
+    }
+    #travelDetailsForm fieldset {
+      border: 1px solid #ddd;
+      border-radius: 5px;
+      padding: 10px;
+      flex: 1;
+      min-width: 250px;
     }
     label {
       display: block;
       margin-top: 10px;
     }
-    input,
-    select,
-    button {
+    input, select, button {
       margin-top: 5px;
+      width: 100%;
+      padding: 5px;
+    }
+    button {
+      background-color: #007bff;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+    button:hover {
+      background-color: #0056b3;
+    }
+    .weather-info {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      margin-top: 10px;
+      padding: 10px;
+      background: #f5f5f5;
+      border-radius: 5px;
+      border: 1px solid #ddd;
+    }
+    .weather-info h3, .weather-info p {
+      margin: 5px 0;
+    }
+    .buttons {
+      display: flex;
+      justify-content: space-between;
+      margin-top: 20px;
     }
   </style>
 </head>
 <body>
-  <h1>Travel Details</h1>
-  <div id="selectedAttractions"></div>
-  <form id="travelDetailsForm">
-    <label for="originLocationCode">Departure City (IATA Code):</label>
-    <input type="text" id="originLocationCode" name="originLocationCode" required>
-
-    <label for="destinationLocationCode">Destination City (IATA Code):</label>
-    <input type="text" id="destinationLocationCode" name="destinationLocationCode" required>
-
-    <label for="departureDate">Departure Date (YYYY-MM-DD):</label>
-    <input type="date" id="departureDate" name="departureDate" required>
-
-    <label for="returnDate">Return Date (YYYY-MM-DD):</label>
-    <input type="date" id="returnDate" name="returnDate">
-
-    <label for="adults">Number of Adults:</label>
-    <input type="number" id="adults" name="adults" required min="1">
-
-    <label for="children">Number of Children:</label>
-    <input type="number" id="children" name="children" min="0">
-
-    <label for="infants">Number of Infants:</label>
-    <input type="number" id="infants" name="infants" min="0">
-
-    <label for="travelClass">Class Type:</label>
-    <select id="travelClass" name="travelClass" required>
-      <option value="ECONOMY">Economy</option>
-      <option value="PREMIUM_ECONOMY">Premium Economy</option>
-      <option value="BUSINESS">Business</option>
-      <option value="FIRST">First Class</option>
-    </select>
-
-    <label for="tripType">Trip Type:</label>
-    <select id="tripType" name="tripType" required>
-      <option value="one-way">One Way</option>
-      <option value="round-trip">Round Trip</option>
-    </select>
-
-    <label for="nonStop">Non-Stop Flights Only:</label>
-    <select id="nonStop" name="nonStop">
-      <option value="false">No</option>
-      <option value="true">Yes</option>
-    </select>
-
-    <label for="currencyCode">Preferred Currency:</label>
-    <input type="text" id="currencyCode" name="currencyCode" placeholder="e.g., USD">
-
-    <label for="maxPrice">Maximum Price per Traveler:</label>
-    <input type="number" id="maxPrice" name="maxPrice">
-
-    <label for="max">Maximum Number of Offers:</label>
-    <input type="number" id="max" name="max" value="250" required>
-
-    <button type="submit">Submit</button>
-  </form>
-  <div id="summary"></div>
-
+  <div class="container">
+    <h1>Travel Details</h1>
+    <div id="selectedAttractions"></div>
+    <form id="travelDetailsForm">
+      <fieldset>
+        <legend>Flight Details</legend>
+        <label for="originLocationCode">Departure City (IATA Code):</label>
+        <input type="text" id="originLocationCode" name="originLocationCode" required pattern="[A-Z]{3}">
+        <label for="destinationLocationCode">Destination City (IATA Code):</label>
+        <input type="text" id="destinationLocationCode" name="destinationLocationCode" required pattern="[A-Z]{3}">
+        <label for="departureDate">Departure Date (YYYY-MM-DD):</label>
+        <input type="date" id="departureDate" name="departureDate" required>
+        <label for="returnDate">Return Date (YYYY-MM-DD):</label>
+        <input type="date" id="returnDate" name="returnDate">
+        <label for="tripType">Trip Type:</label>
+        <select id="tripType" name="tripType" required>
+          <option value="one-way">One Way</option>
+          <option value="round-trip">Round Trip</option>
+        </select>
+      </fieldset>
+      <fieldset>
+        <legend>Passengers and Preferences</legend>
+        <label for="adults">Number of Adults:</label>
+        <input type="number" id="adults" name="adults" required min="1">
+        <label for="children">Number of Children:</label>
+        <input type="number" id="children" name="children" min="0">
+        <label for="infants">Number of Infants:</label>
+        <input type="number" id="infants" name="infants" min="0">
+        <label for="travelClass">Class Type:</label>
+        <select id="travelClass" name="travelClass" required>
+          <option value="ECONOMY">Economy</option>
+          <option value="PREMIUM_ECONOMY">Premium Economy</option>
+          <option value="BUSINESS">Business</option>
+          <option value="FIRST">First Class</option>
+        </select>
+        <label for="nonStop">Non-Stop Flights Only:</label>
+        <select id="nonStop" name="nonStop">
+          <option value="false">No</option>
+          <option value="true">Yes</option>
+        </select>
+        <label for="currencyCode">Preferred Currency:</label>
+        <input type="text" id="currencyCode" name="currencyCode" placeholder="e.g., USD" pattern="[A-Z]{3}">
+        <label for="maxPrice">Maximum Price per Traveler:</label>
+        <input type="number" id="maxPrice" name="maxPrice" min="0">
+        <label for="max">Maximum Number of Offers:</label>
+        <input type="number" id="max" name="max" value="250" required min="1">
+      </fieldset>
+      <button type="submit">Submit</button>
+    </form>
+    <div id="summary"></div>
+    <div id="actionButtons" class="buttons" style="visibility: hidden;">
+      <button id="saveButton" style="font-size: smaller;">Save</button>
+      <button id="quitButton" style="font-size: smaller;">Quit</button>
+    </div>
+  </div>
   <script type="module">
-  
-  import iataToCountry from '../controllers/iataToCountry.js';
+    async function loadIataToCountry() {
+      const response = await fetch('./iataToCountry.json');
+      if (!response.ok) {
+        throw new Error('Network response was not ok');
+      }
+      const iataToCountry = await response.json();
+      return iataToCountry;
+    }
 
     document.addEventListener('DOMContentLoaded', () => {
-      const selectedAttractions = JSON.parse(localStorage.getItem('selectedAttractions')) || [];
-      const attractionsDiv = document.getElementById('selectedAttractions');
-      attractionsDiv.innerHTML = '<h2>Selected Attractions:</h2>';
-      selectedAttractions.forEach(attraction => {
-        const p = document.createElement('p');
-        p.textContent = attraction;
-        attractionsDiv.appendChild(p);
-      });
+      displaySelectedAttractions();
 
       document.getElementById('travelDetailsForm').addEventListener('submit', async (e) => {
         e.preventDefault();
 
-        const originLocationCode = document.getElementById('originLocationCode').value;
-        const destinationLocationCode = document.getElementById('destinationLocationCode').value;
+        const originLocationCode = document.getElementById('originLocationCode').value.toUpperCase();
+        const destinationLocationCode = document.getElementById('destinationLocationCode').value.toUpperCase();
         const departureDate = document.getElementById('departureDate').value;
         const returnDate = document.getElementById('returnDate').value;
         const adults = document.getElementById('adults').value;
@@ -107,40 +170,46 @@
         const travelClass = document.getElementById('travelClass').value;
         const tripType = document.getElementById('tripType').value;
         const nonStop = document.getElementById('nonStop').value === 'true';
-        const currencyCode = document.getElementById('currencyCode').value;
+        const currencyCode = document.getElementById('currencyCode').value.toUpperCase();
         const maxPrice = document.getElementById('maxPrice').value;
         const max = document.getElementById('max').value;
 
-        
-        const destinationCity = iataToCountry[destinationLocationCode.toUpperCase()] || destinationLocationCode;
-
-        const details = {
-          departure: originLocationCode,
-          destination: destinationLocationCode,
-          departureDate,
-          returnDate: tripType === 'round-trip' ? returnDate : undefined,
-          numPeople: adults,
-          children,
-          infants,
-          classType: travelClass,
-          nonStop,
-          currencyCode,
-          maxPrice,
-          max
-        };
-
-        const token = localStorage.getItem('token'); // Retrieve the token
-
-        console.log('Token:', token); // Log the token
-        console.log('Request Body:', details); // Log the request body
+        // Clear previous summary
+        document.getElementById('summary').innerHTML = '';
 
         try {
-          // Fetch flight data
+          const iataToCountry = await loadIataToCountry();
+          const destinationCity = iataToCountry[destinationLocationCode];
+
+          if (!destinationCity) {
+            alert('City not found for the given IATA code');
+            return;
+          }
+
+          const details = {
+            departure: originLocationCode,
+            destination: destinationLocationCode,
+            departureDate,
+            returnDate: tripType === 'round-trip' ? returnDate : undefined,
+            numPeople: parseInt(adults),
+            children: parseInt(children),
+            infants: parseInt(infants),
+            classType: travelClass,
+            nonStop,
+            currencyCode,
+            maxPrice: parseFloat(maxPrice),
+            max: parseInt(max)
+          };
+
+          const token = localStorage.getItem('token');
+          console.log('Token:', token);
+          console.log('Request Body:', details);
+
           const flightResponse = await fetch('http://localhost:3000/api/flights/search', {
             method: 'POST',
             headers: {
               'Content-Type': 'application/json',
-              'x-auth-token': token // Include the token in the header
+              'x-auth-token': token
             },
             body: JSON.stringify(details)
           });
@@ -152,13 +221,18 @@
           }
 
           const flightData = await flightResponse.json();
+          console.log('Flight Data:', flightData); // Debug log
 
-          // Fetch weather data
+          if (flightData.data.length === 0) {
+            alert('No flight offers found');
+            return;
+          }
+
           const weatherResponse = await fetch('http://localhost:3000/api/weather/get', {
             method: 'POST',
             headers: {
               'Content-Type': 'application/json',
-              'x-auth-token': token // Include the token in the header
+              'x-auth-token': token
             },
             body: JSON.stringify({ cityName: destinationCity })
           });
@@ -170,20 +244,166 @@
           }
 
           const weatherData = await weatherResponse.json();
+          console.log('Weather Data:', weatherData); // Debug log
 
-          displaySummary(flightData, weatherData);
+          displaySummary(flightData.data, weatherData, originLocationCode, destinationLocationCode, departureDate, returnDate, tripType); // Pass departure date for accuracy
+
+          // Show the action buttons
+          document.getElementById('actionButtons').style.visibility = 'visible';
         } catch (error) {
           console.error('Error fetching flight or weather data:', error.message);
           alert(`Error fetching flight or weather data: ${error.message}`);
         }
       });
+
+      document.getElementById('saveButton').addEventListener('click', saveDetails);
+      document.getElementById('quitButton').addEventListener('click', () => {
+        window.location.href = 'main.html'; // Change this to the URL of your homepage or desired quit action
+      });
     });
 
-    function displaySummary(flightData, weatherData) {
+    function displaySelectedAttractions() {
+      const selectedAttractions = JSON.parse(localStorage.getItem('selectedAttractions')) || [];
+      console.log('Selected Attractions:', selectedAttractions); // Debug log
+      const attractionsDiv = document.getElementById('selectedAttractions');
+      attractionsDiv.innerHTML = '<h2>Selected Attractions:</h2><div class="attraction-cards"></div>';
+      const cardsContainer = attractionsDiv.querySelector('.attraction-cards');
+      selectedAttractions.forEach(attraction => {
+        const card = document.createElement('div');
+        card.className = 'card';
+        card.innerHTML = `
+          <img src="${attraction.photoUrl}" alt="${attraction.name}">
+          <label>${attraction.name}</label>
+          <p>${attraction.description}</p>
+        `;
+        cardsContainer.appendChild(card);
+      });
+    }
+
+    function displaySummary(flightData, weatherData, originLocationCode, destinationLocationCode, departureDate, returnDate, tripType) {
       const summaryDiv = document.getElementById('summary');
-      summaryDiv.innerHTML = '<h2>Summary:</h2>';
-      summaryDiv.innerHTML += `<h3>Flight Results:</h3><pre>${JSON.stringify(flightData, null, 2)}</pre>`;
-      summaryDiv.innerHTML += `<h3>Weather Results:</h3><pre>${JSON.stringify(weatherData, null, 2)}</pre>`;
+      summaryDiv.innerHTML = `
+        <h2>Summary:</h2>
+        <div class="weather-card">
+          <div class="weather-info">
+            <h3>Weather in ${destinationLocationCode}</h3>
+            <p>Description: ${weatherData.description}</p>
+            <p>Temperature: ${weatherData.temperature}°C</p>
+            <p>Time: ${new Date().toLocaleTimeString()}</p>
+            <p>Date: ${departureDate}</p>
+          </div>
+        </div>
+        <h3>Flight Results:</h3>
+        <div class="flight-cards"></div>
+      `;
+      const cardsContainer = summaryDiv.querySelector('.flight-cards');
+      if (flightData.length === 0) {
+        cardsContainer.innerHTML = '<p>No flight offers found.</p>';
+        return;
+      }
+      const uniqueFlights = new Set();
+      flightData.forEach(flight => {
+        console.log('Processing flight:', flight); // Debug log for each flight
+        const departure = flight.itineraries[0].segments[0].departure.iataCode;
+        const arrival = flight.itineraries[0].segments[0].arrival.iataCode;
+        console.log(`Departure: ${departure}, Arrival: ${arrival}`); // Debug log for departure and arrival IATA codes
+
+        if (!uniqueFlights.has(flight.id) && departure === originLocationCode && arrival === destinationLocationCode) {
+          uniqueFlights.add(flight.id);
+          const carrier = flight.validatingAirlineCodes.join(', ');
+          const aircraft = flight.itineraries[0].segments[0].aircraft.code;
+
+          const card = document.createElement('div');
+          card.className = 'card';
+          card.innerHTML = `
+            <p>Source: ${flight.source}</p>
+            <p>Price: ${flight.price.currency} ${flight.price.total}</p>
+            <p>Departure: ${departure} - ${new Date(flight.itineraries[0].segments[0].departure.at).toLocaleString()}</p>
+            <p>Arrival: ${arrival} - ${new Date(flight.itineraries[0].segments[0].arrival.at).toLocaleString()}</p>
+            <p>Class: ${flight.travelerPricings[0].fareDetailsBySegment[0].cabin}</p>
+            <p>Duration: ${flight.itineraries[0].duration}</p>
+            <p>Airline: ${carrier}</p>
+            <p>Aircraft: ${aircraft}</p>
+            <p>Type: ${tripType}</p>
+            ${flight.travelerPricings.map(traveler => `
+              <p>Traveler Type: ${traveler.travelerType}</p>
+              <p>Traveler Price: ${traveler.price.currency} ${traveler.price.total}</p>
+            `).join('')}
+            <input type="checkbox" value='${JSON.stringify({
+              source: flight.source,
+              price: `${flight.price.currency} ${flight.price.total}`,
+              departure: `${departure} - ${new Date(flight.itineraries[0].segments[0].departure.at).toLocaleString()}`,
+              arrival: `${arrival} - ${new Date(flight.itineraries[0].segments[0].arrival.at).toLocaleString()}`,
+              class: flight.travelerPricings[0].fareDetailsBySegment[0].cabin,
+              duration: flight.itineraries[0].duration,
+              airline: carrier,
+              aircraft: aircraft,
+              type: tripType,
+              travelers: flight.travelerPricings.map(traveler => `Traveler Type: ${traveler.travelerType}, Traveler Price: ${traveler.price.currency} ${traveler.price.total}`)
+            })}'>
+          `;
+          if (returnDate && flight.itineraries.length > 1) {
+            const returnSegment = flight.itineraries[1].segments[0];
+            card.innerHTML += `
+              <hr>
+              <p>Return Flight</p>
+              <p>Departure: ${returnSegment.departure.iataCode} - ${new Date(returnSegment.departure.at).toLocaleString()}</p>
+              <p>Arrival: ${returnSegment.arrival.iataCode} - ${new Date(returnSegment.arrival.at).toLocaleString()}</p>
+              <p>Class: ${flight.travelerPricings[0].fareDetailsBySegment[1].cabin}</p>
+              <p>Duration: ${flight.itineraries[1].duration}</p>
+              <p>Airline: ${carrier}</p>
+              <p>Aircraft: ${aircraft}</p>
+            `;
+          }
+          cardsContainer.appendChild(card);
+        }
+      });
+      if (uniqueFlights.size === 0) {
+        cardsContainer.innerHTML = '<p>No flight offers found matching the specified route.</p>';
+      }
+    }
+
+    async function saveDetails() {
+      const selectedAttractions = JSON.parse(localStorage.getItem('selectedAttractions')) || [];
+      const selectedFlights = Array.from(document.querySelectorAll('.flight-cards input[type="checkbox"]:checked')).map(input => JSON.parse(input.value));
+      const weatherData = document.querySelector('.weather-info');
+      const weather = {
+        description: weatherData.querySelector('p:nth-of-type(1)').innerText.split(': ')[1],
+        temperature: weatherData.querySelector('p:nth-of-type(2)').innerText.split(': ')[1],
+        time: weatherData.querySelector('p:nth-of-type(3)').innerText.split(': ')[1],
+        date: weatherData.querySelector('p:nth-of-type(4)').innerText.split(': ')[1],
+      };
+
+      const details = {
+        destination: document.getElementById('destinationLocationCode').value.toUpperCase(),
+        attraction: selectedAttractions,
+        flight: selectedFlights,
+        weather: weather
+      };
+
+      const token = localStorage.getItem('token');
+      try {
+        const response = await fetch('http://localhost:3000/api/details/save', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'x-auth-token': token
+          },
+          body: JSON.stringify(details)
+        });
+
+        if (!response.ok) {
+          const errorData = await response.text();
+          console.error('Error saving details:', errorData);
+          throw new Error(`Error saving details: ${errorData}`);
+        }
+
+        const responseData = await response.json();
+        alert('Details saved successfully');
+      } catch (error) {
+        console.error('Error saving details:', error);
+        alert(`Error saving details: ${error.message}`);
+      }
     }
   </script>
 </body>

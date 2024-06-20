@@ -3332,4 +3332,5 @@ const iataToCountry = {
     "ZZO"  : "Zona Cafetera"
 };
 
-export default iataToCountry;
+
+module.exports = iataToCountry;

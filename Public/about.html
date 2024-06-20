@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>About Us</title>
+  <link rel="stylesheet" href="header.css">
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+    }
+    .content {
+      margin: 20px;
+      padding: 20px;
+      background-color: white;
+      border-radius: 8px;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    }
+    header {
+      position: fixed;
+      top: 0;
+      width: 100%;
+      background-color: #ffffff;
+      color: white;
+      padding: 10px 0;
+    }
+    nav ul {
+      list-style-type: none;
+      margin: 0;
+      padding: 0;
+      display: flex;
+      justify-content: space-around;
+    }
+    nav ul li {
+      display: inline;
+      padding: 0 10px;
+    }
+    nav ul li a {
+      color: white;
+      text-decoration: none;
+    }
+    .profile-icon {
+      width: 30px;
+      height: 30px;
+      border-radius: 50%;
+    }
+    .dropdown {
+      position: relative;
+      display: inline-block;
+    }
+    .dropdown-content {
+      display: none;
+      position: absolute;
+      background-color: #f9f9f9;
+      min-width: 160px;
+      box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+      z-index: 1;
+    }
+    .dropdown-content a {
+      color: black;
+      padding: 12px 16px;
+      text-decoration: none;
+      display: block;
+    }
+    .dropdown-content a:hover {
+      background-color: #f1f1f1;
+    }
+    .dropdown:hover .dropdown-content {
+      display: block;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <nav>
+      <ul id="nav-links">
+        <li><a href="main.html">Home</a></li>
+        <li><a href="about.html">About Us</a></li>
+        <li class="logged-in"><a href="index.html">Search Attraction</a></li>
+        <li class="logged-in"><a href="favorite.html">Favourites</a></li>
+        <li id="auth-links" class="right"></li>
+      </ul>
+    </nav>
+  </header>
+  <div class="content">
+    <h1>About Us</h1>
+    <p>Welcome to Travel Planner, your go-to application for planning your travels efficiently and enjoyably.</p>
+    <h2>Our Mission</h2>
+    <p>Our mission is to simplify the travel planning process and help you discover new destinations with ease.</p>
+    <h2>Who We Are</h2>
+    <p>We are a team of travel enthusiasts dedicated to providing the best tools and information to make your trips memorable.</p>
+    <h2>Contact Us</h2>
+    <p>If you have any questions or feedback, feel free to contact us at <a href="mailto:support@travelplanner.com">support@travelplanner.com</a>.</p>
+  </div>
+  <script>
+    document.addEventListener("DOMContentLoaded", () => {
+      const token = localStorage.getItem('token');
+      const authLinks = document.getElementById('auth-links');
+      const loggedInElements = document.querySelectorAll('.logged-in');
+
+      if (token) {
+        authLinks.innerHTML = `
+          <li class="dropdown right">
+            <a href="#" class="dropbtn"><img src="profile.png" alt="Profile" class="profile-icon"></a>
+            <div class="dropdown-content">
+              <a href="change-password.html">Change Password</a>
+              <a href="#" id="logout">Logout</a>
+            </div>
+          </li>
+        `;
+        loggedInElements.forEach(el => el.style.display = 'block');
+
+        document.getElementById('logout').addEventListener('click', () => {
+          localStorage.removeItem('token');
+          window.location.href = '/login.html';
+        });
+      } else {
+        loggedInElements.forEach(el => el.style.display = 'none');
+        authLinks.innerHTML = `<a href="login.html" id="login-register">Login/Register</a>`;
+      }
+    });
+  </script>
+</body>
+</html>

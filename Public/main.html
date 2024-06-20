@@ -4,6 +4,8 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Travel Planner</title>
+  <link rel="stylesheet" href="header.css">
+  <link rel="stylesheet" href="styles.css">
   <style>
     body {
       display: flex;
@@ -16,30 +18,108 @@
       font-family: Arial, sans-serif;
     }
     h1 {
+      margin-top: 150px; /* Adjust for the fixed header */
       margin-bottom: 20px;
     }
     .buttons {
-      display: flex;
-      gap: 10px;
+      display: none;
     }
-    .button {
-      padding: 10px 20px;
-      text-decoration: none;
+    header {
+      position: fixed;
+      top: 0;
+      width: 100%;
+      background-color: #ffffff;
       color: white;
-      background-color: #007BFF;
-      border-radius: 5px;
-      transition: background-color 0.3s;
+      padding: 10px 0;
     }
-    .button:hover {
-      background-color: #0056b3;
+    nav ul {
+      list-style-type: none;
+      margin: 0;
+      padding: 0;
+      display: flex;
+      justify-content: space-around;
+    }
+    nav ul li {
+      display: inline;
+      padding: 0 10px;
+    }
+    nav ul li a {
+      color: white;
+      text-decoration: none;
+    }
+    .profile-icon {
+      width: 30px;
+      height: 30px;
+      border-radius: 50%;
+    }
+    .dropdown {
+      position: relative;
+      display: inline-block;
+    }
+    .dropdown-content {
+      display: none;
+      position: absolute;
+      background-color: #f9f9f9;
+      min-width: 160px;
+      box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+      z-index: 1;
+    }
+    .dropdown-content a {
+      color: black;
+      padding: 12px 16px;
+      text-decoration: none;
+      display: block;
+    }
+    .dropdown-content a:hover {
+      background-color: #f1f1f1;
+    }
+    .dropdown:hover .dropdown-content {
+      display: block;
     }
   </style>
 </head>
 <body>
+  <header>
+    <nav>
+      <ul id="nav-links">
+        <li><a href="main.html">Home</a></li>
+        <li><a href="about.html">About Us</a></li>
+        <li class="logged-in"><a href="index.html">Search Attraction</a></li>
+        <li class="logged-in"><a href="favorite.html">Favourites</a></li>
+        <li id="auth-links" class="right"></li>
+      </ul>
+    </nav>
+  </header>
+  
   <h1>Welcome to Travel Planner</h1>
-  <div class="buttons">
-    <a href="/login.html" class="button">Login</a>
-    <a href="/register.html" class="button">Register</a>
-  </div>
+  
+  <script>
+    document.addEventListener("DOMContentLoaded", () => {
+      const token = localStorage.getItem('token');
+      const authLinks = document.getElementById('auth-links');
+      const loggedInElements = document.querySelectorAll('.logged-in');
+
+      if (token) {
+        authLinks.innerHTML = `
+          <li class="dropdown right">
+            <a href="#" class="dropbtn"><img src="profile.png" alt="Profile" class="profile-icon"></a>
+            <div class="dropdown-content">
+              <a href="change-password.html">Change Password</a>
+              <a href="#" id="logout">Logout</a>
+            </div>
+          </li>
+        `;
+        loggedInElements.forEach(el => el.style.display = 'block');
+
+        document.getElementById('logout').addEventListener('click', () => {
+          localStorage.removeItem('token');
+          window.location.href = '/login.html';
+        });
+      } else {
+        loggedInElements.forEach(el => el.style.display = 'none');
+        authLinks.innerHTML = `<a href="login.html" id="login-register">Login/Register</a>`;
+      }
+    });
+  </script>
 </body>
 </html>
