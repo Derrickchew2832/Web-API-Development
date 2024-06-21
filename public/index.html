@@ -6,179 +6,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Search Attraction</title>
   <link rel="stylesheet" href="header.css">
-  <style>
-    body {
-      font-family: Arial, sans-serif;
-      background: #f5f5f5;
-      margin: 0;
-    }
-
-    .container {
-      margin-top: 80px;
-      /* Adjust for the fixed header */
-      margin: 20px;
-      padding: 20px;
-      background-color: white;
-      border-radius: 8px;
-      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-    }
-
-    h1 {
-      text-align: center;
-      margin-bottom: 20px;
-    }
-
-    form {
-      margin-bottom: 20px;
-      text-align: center;
-    }
-
-    form label {
-      display: block;
-      margin-bottom: 5px;
-    }
-
-    form input[type="text"] {
-      padding: 5px;
-      width: 80%;
-      max-width: 300px;
-      margin-bottom: 10px;
-    }
-
-    form button {
-      padding: 10px 20px;
-      background-color: #007bff;
-      color: white;
-      border: none;
-      border-radius: 5px;
-      cursor: pointer;
-    }
-
-    form button:hover {
-      background-color: #0056b3;
-    }
-
-    #map {
-      height: 400px;
-      width: 100%;
-      margin-bottom: 20px;
-    }
-
-    .attraction-cards {
-      display: flex;
-      flex-wrap: wrap;
-      justify-content: center;
-    }
-
-    .card {
-      background: white;
-      border: 1px solid #ddd;
-      border-radius: 5px;
-      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-      margin: 10px;
-      padding: 10px;
-      width: 200px;
-      text-align: center;
-    }
-
-    .card img {
-      max-width: 100%;
-      height: auto;
-    }
-
-    .card label {
-      font-weight: bold;
-      margin-top: 10px;
-      display: block;
-    }
-
-    .card p {
-      font-size: 14px;
-      color: #555;
-    }
-
-    .card input[type="checkbox"] {
-      margin-top: 10px;
-    }
-
-    .proceed-button {
-      display: block;
-      margin: 20px auto;
-      padding: 10px 20px;
-      background-color: #007bff;
-      color: #fff;
-      border: none;
-      border-radius: 5px;
-      cursor: pointer;
-      font-size: 16px;
-    }
-
-    .proceed-button:hover {
-      background-color: #0056b3;
-    }
-
-    header {
-      position: fixed;
-      top: 0;
-      width: 100%;
-      background-color: #ffffff;
-      color: white;
-      padding: 10px 0;
-    }
-
-    nav ul {
-      list-style-type: none;
-      margin: 0;
-      padding: 0;
-      display: flex;
-      justify-content: space-around;
-    }
-
-    nav ul li {
-      display: inline;
-      padding: 0 10px;
-    }
-
-    nav ul li a {
-      color: white;
-      text-decoration: none;
-    }
-
-    .profile-icon {
-      width: 30px;
-      height: 30px;
-      border-radius: 50%;
-    }
-
-    .dropdown {
-      position: relative;
-      display: inline-block;
-    }
-
-    .dropdown-content {
-      display: none;
-      position: absolute;
-      background-color: #f9f9f9;
-      min-width: 160px;
-      box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.2);
-      z-index: 1;
-    }
-
-    .dropdown-content a {
-      color: black;
-      padding: 12px 16px;
-      text-decoration: none;
-      display: block;
-    }
-
-    .dropdown-content a:hover {
-      background-color: #f1f1f1;
-    }
-
-    .dropdown:hover .dropdown-content {
-      display: block;
-    }
-  </style>
+  <link rel="stylesheet" href="index_style.css">
 </head>
 
 <body>
@@ -197,9 +25,14 @@
   <div class="container">
     <h1>Travel Planner</h1>
     <form id="destinationForm">
-      <label for="destination">Enter Destination:</label>
-      <input type="text" id="destination" name="destination" required>
-      <button type="submit">Search</button>
+      <div class = "input-field">
+        <label for="destination">Enter Destination:</label>
+        <input type="text" id="destination" name="destination" required>
+      </div>
+      <br></br>
+      <div class="button-wrapper">
+        <button type="submit">Search</button>
+      </div>
     </form>
     <div id="map"></div>
     <div id="attractions"></div>
