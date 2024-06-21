@@ -4,20 +4,239 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Travel Planner</title>
-  <link rel="stylesheet" href="styles.css">
-  <script async defer
-    src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCmgZao1Qy8H168s2V-lc__PHr0oijVYeI&libraries=places,marker&callback=initMap">
-  </script>
-  <script>
-    // Check if the user is authenticated
-    if (!localStorage.getItem('token')) {
-      alert('You must be logged in to access this page');
-      window.location.href = '/login.html';
+  <title>Search Attraction</title>
+  <link rel="stylesheet" href="header.css">
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f5f5f5;
+      margin: 0;
     }
 
-    // Initialize and add the map
-    function initMap() {
+    .container {
+      margin-top: 80px;
+      /* Adjust for the fixed header */
+      margin: 20px;
+      padding: 20px;
+      background-color: white;
+      border-radius: 8px;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    }
+
+    h1 {
+      text-align: center;
+      margin-bottom: 20px;
+    }
+
+    form {
+      margin-bottom: 20px;
+      text-align: center;
+    }
+
+    form label {
+      display: block;
+      margin-bottom: 5px;
+    }
+
+    form input[type="text"] {
+      padding: 5px;
+      width: 80%;
+      max-width: 300px;
+      margin-bottom: 10px;
+    }
+
+    form button {
+      padding: 10px 20px;
+      background-color: #007bff;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+
+    form button:hover {
+      background-color: #0056b3;
+    }
+
+    #map {
+      height: 400px;
+      width: 100%;
+      margin-bottom: 20px;
+    }
+
+    .attraction-cards {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+
+    .card {
+      background: white;
+      border: 1px solid #ddd;
+      border-radius: 5px;
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+      margin: 10px;
+      padding: 10px;
+      width: 200px;
+      text-align: center;
+    }
+
+    .card img {
+      max-width: 100%;
+      height: auto;
+    }
+
+    .card label {
+      font-weight: bold;
+      margin-top: 10px;
+      display: block;
+    }
+
+    .card p {
+      font-size: 14px;
+      color: #555;
+    }
+
+    .card input[type="checkbox"] {
+      margin-top: 10px;
+    }
+
+    .proceed-button {
+      display: block;
+      margin: 20px auto;
+      padding: 10px 20px;
+      background-color: #007bff;
+      color: #fff;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      font-size: 16px;
+    }
+
+    .proceed-button:hover {
+      background-color: #0056b3;
+    }
+
+    header {
+      position: fixed;
+      top: 0;
+      width: 100%;
+      background-color: #ffffff;
+      color: white;
+      padding: 10px 0;
+    }
+
+    nav ul {
+      list-style-type: none;
+      margin: 0;
+      padding: 0;
+      display: flex;
+      justify-content: space-around;
+    }
+
+    nav ul li {
+      display: inline;
+      padding: 0 10px;
+    }
+
+    nav ul li a {
+      color: white;
+      text-decoration: none;
+    }
+
+    .profile-icon {
+      width: 30px;
+      height: 30px;
+      border-radius: 50%;
+    }
+
+    .dropdown {
+      position: relative;
+      display: inline-block;
+    }
+
+    .dropdown-content {
+      display: none;
+      position: absolute;
+      background-color: #f9f9f9;
+      min-width: 160px;
+      box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.2);
+      z-index: 1;
+    }
+
+    .dropdown-content a {
+      color: black;
+      padding: 12px 16px;
+      text-decoration: none;
+      display: block;
+    }
+
+    .dropdown-content a:hover {
+      background-color: #f1f1f1;
+    }
+
+    .dropdown:hover .dropdown-content {
+      display: block;
+    }
+  </style>
+</head>
+
+<body>
+  <header>
+    <nav>
+      <ul id="nav-links">
+        <li><a href="main.html">Home</a></li>
+        <li><a href="about.html">About Us</a></li>
+        <li class="logged-in"><a href="index.html">Search Attraction</a></li>
+        <li class="logged-in"><a href="favorite.html">Favourites</a></li>
+        <li id="auth-links" class="right"></li>
+      </ul>
+    </nav>
+  </header>
+
+  <div class="container">
+    <h1>Travel Planner</h1>
+    <form id="destinationForm">
+      <label for="destination">Enter Destination:</label>
+      <input type="text" id="destination" name="destination" required>
+      <button type="submit">Search</button>
+    </form>
+    <div id="map"></div>
+    <div id="attractions"></div>
+  </div>
+
+  <script>
+    document.addEventListener("DOMContentLoaded", () => {
+      const token = localStorage.getItem('token');
+      const authLinks = document.getElementById('auth-links');
+      const loggedInElements = document.querySelectorAll('.logged-in');
+
+      if (token) {
+        authLinks.innerHTML = `
+          <li class="dropdown right">
+            <a href="#" class="dropbtn"><img src="profile.png" alt="Profile" class="profile-icon"></a>
+            <div class="dropdown-content">
+              <a href="change-password.html">Change Password</a>
+              <a href="#" id="logout">Logout</a>
+            </div>
+          </li>
+        `;
+        loggedInElements.forEach(el => el.style.display = 'block');
+
+        document.getElementById('logout').addEventListener('click', () => {
+          localStorage.removeItem('token');
+          window.location.href = '/login.html';
+        });
+      } else {
+        loggedInElements.forEach(el => el.style.display = 'none');
+        alert('You must be logged in to access this page');
+        window.location.href = '/login.html';
+      }
+    });
+
+    async function initMap() {
+      const { AdvancedMarkerElement } = await google.maps.importLibrary("marker");
+
       document.getElementById('destinationForm').addEventListener('submit', async (e) => {
         e.preventDefault();
 
@@ -28,7 +247,6 @@
           return;
         }
 
-        // Fetch attractions and display on map
         try {
           const response = await fetch('/api/attractions/map', {
             method: 'POST',
@@ -41,7 +259,6 @@
 
           const data = await response.json();
           if (response.ok) {
-            console.log("Map Data:", data.map);
             displayMap(data.map);
             displayAttractions(data.attractions);
           } else {
@@ -57,10 +274,8 @@
         const mapOptions = {
           center: { lat: mapData.results[0].geometry.location.lat, lng: mapData.results[0].geometry.location.lng },
           zoom: 12,
-          mapId: 'd6c2462d6114c70' // Your Map ID
+          mapId: 'd6c2462d6114c70' // Replace with your actual map ID
         };
-
-        console.log("Map Options:", mapOptions);
 
         const map = new google.maps.Map(document.getElementById('map'), mapOptions);
 
@@ -71,17 +286,13 @@
           content.style.backgroundColor = 'white';
           content.style.border = '1px solid black';
 
-          console.log('Creating AdvancedMarkerElement for:', place.formatted_address);
-
           try {
-            const marker = new google.maps.marker.AdvancedMarkerElement({
+            const marker = new AdvancedMarkerElement({
               position: { lat: place.geometry.location.lat, lng: place.geometry.location.lng },
               map: map,
               title: place.formatted_address,
-              content: content // Use a DOM element for the content
+              content: content
             });
-
-            console.log('Marker created successfully:', marker);
           } catch (error) {
             console.error('Error creating AdvancedMarkerElement for place:', place, error);
           }
@@ -94,7 +305,6 @@
         const container = document.createElement('div');
         container.className = 'attraction-cards';
 
-        // Filter attractions that have sufficient data
         const validAttractions = attractions.filter(attraction => attraction.photo && attraction.name && attraction.description);
 
         validAttractions.forEach(attraction => {
@@ -126,6 +336,7 @@
 
         const proceedButton = document.createElement('button');
         proceedButton.textContent = 'Proceed';
+        proceedButton.className = 'proceed-button';
         proceedButton.onclick = () => proceedToDetails(container);
         attractionsDiv.appendChild(proceedButton);
       }
@@ -135,7 +346,13 @@
         const checkboxes = container.querySelectorAll('input[type="checkbox"]:checked');
 
         checkboxes.forEach(checkbox => {
-          selectedAttractions.push(checkbox.value);
+          const card = checkbox.closest('.card');
+          const attraction = {
+            name: card.querySelector('label').textContent,
+            description: card.querySelector('p').textContent,
+            photoUrl: card.querySelector('img').src
+          };
+          selectedAttractions.push(attraction);
         });
 
         if (selectedAttractions.length === 0) {
@@ -144,23 +361,18 @@
         }
 
         localStorage.setItem('selectedAttractions', JSON.stringify(selectedAttractions));
+        const destination = document.getElementById('destination').value.trim();
+        console.log('Storing search location:', destination); // Debug log
+        localStorage.setItem('searchLocation', destination);
         window.location.href = '/details.html';
       }
     }
+
+    // Initialize the map
+    initMap();
   </script>
-</head>
-
-<body>
-  <h1>Travel Planner</h1>
-  <p><a href="/main.html">Main</a></p>
-  <form id="destinationForm">
-    <label for="destination">Enter Destination:</label>
-    <input type="text" id="destination" name="destination" required>
-    <button type="submit">Search</button>
-  </form>
-
-  <div id="map" style="height: 400px; width: 100%;"></div>
-  <div id="attractions"></div>
+  <script async defer
+    src="https://maps.googleapis.com/maps/api/js?key=AIzaSyD9Msy5D_ZnVikL-7UemQsplpPDmTMOH30&libraries=marker&callback=initMap&v=weekly"></script>
 </body>
 
 </html>

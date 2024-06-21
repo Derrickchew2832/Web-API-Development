@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="header.css">
+  <title>Favorites</title>
+  <style>
+    body {
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-start;
+      align-items: center;
+      height: 100vh;
+      margin: 0;
+      background: #f5f5f5;
+      font-family: Arial, sans-serif;
+    }
+    h1 {
+      margin-top: 80px; /* Adjust for the fixed header */
+      margin-bottom: 20px;
+      margin-left: 20px; /* Move to the left */
+      align-self: flex-start;
+    }
+    .container {
+      max-width: 1200px;
+      width: 100%;
+      padding: 20px;
+      background-color: white;
+      border-radius: 8px;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    }
+    .card {
+      background: white;
+      border: 1px solid #ddd;
+      border-radius: 5px;
+      padding: 10px;
+      text-align: center;
+      margin-bottom: 20px;
+      cursor: pointer;
+      transition: transform 0.2s ease;
+      overflow: hidden;
+      max-height: 200px; /* Set initial height */
+      width: calc(100% - 40px); /* Make the card longer */
+      margin-left: 20px; /* Align with the title */
+    }
+    .card:hover {
+      transform: scale(1.05);
+    }
+    .card-details {
+      display: none;
+      text-align: left;
+      max-height: 300px; /* Set max height */
+      overflow-y: auto; /* Enable vertical scrolling */
+    }
+    .card.expanded {
+      max-height: 1000px; /* Increase height to show all content */
+    }
+    header {
+      position: fixed;
+      top: 0;
+      width: 100%;
+      background-color: #ffffff;
+      color: white;
+      padding: 10px 0;
+    }
+    nav ul {
+      list-style-type: none;
+      margin: 0;
+      padding: 0;
+      display: flex;
+      justify-content: space-around;
+    }
+    nav ul li {
+      display: inline;
+      padding: 0 10px;
+    }
+    nav ul li a {
+      color: white;
+      text-decoration: none;
+    }
+    .profile-icon {
+      width: 30px;
+      height: 30px;
+      border-radius: 50%;
+    }
+    .dropdown {
+      position: relative;
+      display: inline-block;
+    }
+    .dropdown-content {
+      display: none;
+      position: absolute;
+      background-color: #f9f9f9;
+      min-width: 160px;
+      box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+      z-index: 1;
+    }
+    .dropdown-content a {
+      color: black;
+      padding: 12px 16px;
+      text-decoration: none;
+      display: block;
+    }
+    .dropdown-content a:hover {
+      background-color: #f1f1f1;
+    }
+    .dropdown:hover .dropdown-content {
+      display: block;
+    }
+    .delete-button {
+      background-color: #ff4d4d;
+      color: white;
+      border: none;
+      padding: 10px;
+      border-radius: 5px;
+      cursor: pointer;
+      width: 100%;
+    }
+    .delete-button:hover {
+      background-color: #ff1a1a;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <nav>
+      <ul id="nav-links">
+        <li><a href="main.html">Home</a></li>
+        <li><a href="about.html">About Us</a></li>
+        <li class="logged-in"><a href="index.html">Search Attraction</a></li>
+        <li class="logged-in"><a href="favorite.html">Favourites</a></li>
+        <li id="auth-links" class="right"></li>
+      </ul>
+    </nav>
+  </header>
+  <h1>Favorites</h1>
+  <div class="container" id="favoritesContainer"></div>
+  <script>
+    document.addEventListener("DOMContentLoaded", () => {
+      const token = localStorage.getItem('token');
+      const authLinks = document.getElementById('auth-links');
+      const loggedInElements = document.querySelectorAll('.logged-in');
+
+      if (token) {
+        authLinks.innerHTML = `
+          <li class="dropdown right">
+            <a href="#" class="dropbtn"><img src="profile.png" alt="Profile" class="profile-icon"></a>
+            <div class="dropdown-content">
+              <a href="change-password.html">Change Password</a>
+              <a href="#" id="logout">Logout</a>
+            </div>
+          </li>
+        `;
+        loggedInElements.forEach(el => el.style.display = 'block');
+
+        document.getElementById('logout').addEventListener('click', () => {
+          localStorage.removeItem('token');
+          window.location.href = '/login.html';
+        });
+      } else {
+        loggedInElements.forEach(el => el.style.display = 'none');
+        authLinks.innerHTML = `<a href="login.html" id="login-register">Login/Register</a>`;
+      }
+    });
+
+    async function fetchFavorites() {
+      const token = localStorage.getItem('token');
+      try {
+        const response = await fetch('http://localhost:3000/api/details/favorites', {
+          method: 'GET',
+          headers: {
+            'Content-Type': 'application/json',
+            'x-auth-token': token
+          }
+        });
+
+        if (!response.ok) {
+          const errorData = await response.text();
+          console.error('Error fetching favorites:', errorData);
+          throw new Error(`Error fetching favorites: ${errorData}`);
+        }
+
+        const favorites = await response.json();
+        console.log('Fetched favorites:', favorites); // Debug log
+        displayFavorites(favorites);
+      } catch (error) {
+        console.error('Error fetching favorites:', error);
+        alert(`Error fetching favorites: ${error.message}`);
+      }
+    }
+
+    function displayFavorites(favorites) {
+      const container = document.getElementById('favoritesContainer');
+      container.innerHTML = '';
+
+      favorites.forEach(favorite => {
+        console.log('Favorite details:', favorite); // Debug log for each favorite item
+        const card = document.createElement('div');
+        card.className = 'card';
+        card.innerHTML = `
+          <h3>Destination: ${favorite.destination}</h3>
+          <p>Click to view more details</p>
+          <div class="card-details">
+            <h4>Attractions:</h4>
+            ${Array.isArray(favorite.attraction) ? favorite.attraction.map(attr => `
+              <div>
+                <p>Name: ${attr.name}</p>
+                <img src="${attr.photoUrl}" alt="${attr.name}" style="width:100%;max-width:200px">
+                <p>Description: ${attr.description}</p>
+              </div>
+              <hr>
+            `).join('') : 'No attractions available'}
+            <h4>Flights:</h4>
+            ${Array.isArray(favorite.flight) ? favorite.flight.map(flight => `
+              <div>
+                <p>Source: ${flight.source}</p>
+                <p>Price: ${flight.price}</p>
+                <p>Departure: ${flight.departure}</p>
+                <p>Arrival: ${flight.arrival}</p>
+                <p>Class: ${flight.class}</p>
+                <p>Duration: ${flight.duration}</p>
+                <p>Airline: ${flight.airline}</p>
+                <p>Aircraft: ${flight.aircraft}</p>
+                <p>Type: ${flight.type}</p>
+                <p>Travelers: ${flight.travelers ? flight.travelers.join(', ') : 'N/A'}</p>
+              </div>
+              <hr>
+            `).join('') : 'No flights available'}
+            <h4>Weather:</h4>
+            <p>Description: ${favorite.weather.description}</p>
+            <p>Temperature: ${favorite.weather.temperature}</p>
+            <p>Time: ${favorite.weather.time}</p>
+            <p>Date: ${favorite.weather.date}</p>
+            <button class="delete-button" data-id="${favorite._id}">Delete</button>
+          </div>
+        `;
+        card.addEventListener('click', () => {
+          const details = card.querySelector('.card-details');
+          if (details.style.display === 'block') {
+            details.style.display = 'none';
+            card.classList.remove('expanded');
+          } else {
+            details.style.display = 'block';
+            card.classList.add('expanded');
+          }
+        });
+        container.appendChild(card);
+
+        card.querySelector('.delete-button').addEventListener('click', async (event) => {
+          event.stopPropagation(); // Prevent card click event
+          const favoriteId = event.target.getAttribute('data-id');
+          try {
+            const response = await fetch(`http://localhost:3000/api/details/delete/${favoriteId}`, {
+              method: 'DELETE',
+              headers: {
+                'Content-Type': 'application/json',
+                'x-auth-token': localStorage.getItem('token')
+              }
+            });
+
+            if (!response.ok) {
+              const errorData = await response.text();
+              console.error('Error deleting favorite:', errorData);
+              throw new Error(`Error deleting favorite: ${errorData}`);
+            }
+
+            // Remove the deleted card from the DOM
+            card.remove();
+          } catch (error) {
+            console.error('Error deleting favorite:', error);
+            alert(`Error deleting favorite: ${error.message}`);
+          }
+        });
+      });
+    }
+
+    document.addEventListener('DOMContentLoaded', fetchFavorites);
+  </script>
+</body>
+</html>
