@@ -141,8 +141,15 @@
         const validAttractions = attractions.filter(attraction => attraction.photo && attraction.name && attraction.description);
 
         validAttractions.forEach(attraction => {
+
           const card = document.createElement('div');
           card.className = 'card';
+
+          const card2 = document.createElement('div');
+          card2.className = 'card2';
+
+          const imgbox = document.createElement('div');
+          imgbox.className = 'img-section';
 
           const img = document.createElement('img');
           img.src = attraction.photo ? attraction.photo.images.small.url : 'default.jpg';
@@ -151,17 +158,23 @@
           const label = document.createElement('label');
           label.textContent = attraction.name;
 
+          const descriptionbox = document.createElement('div');
+          descriptionbox.className = 'desbox';
+
           const description = document.createElement('p');
           description.textContent = attraction.description || 'No description available';
-
+          
           const checkbox = document.createElement('input');
           checkbox.type = 'checkbox';
           checkbox.value = attraction.name;
 
-          card.appendChild(img);
-          card.appendChild(label);
-          card.appendChild(description);
-          card.appendChild(checkbox);
+          imgbox.appendChild(img);
+          descriptionbox.appendChild(description);
+          card2.appendChild(imgbox);
+          card2.appendChild(label);
+          card2.appendChild(descriptionbox);
+          card2.appendChild(checkbox);
+          card.appendChild(card2);
           container.appendChild(card);
         });
 

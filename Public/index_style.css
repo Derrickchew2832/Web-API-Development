@@ -16,6 +16,7 @@ body {
     background:url('/back_img.jpg') no-repeat;
     background-size: cover;
     background-position:center;
+    background-attachment: fixed;
 }
 
 .container {
@@ -100,39 +101,95 @@ form button:hover {
     height: 400px;
     width: 100%;
     margin-bottom: 20px;
+    border: none;
+    border-radius: 25px;
+    box-shadow:0 0 10px rgba(255, 255, 255, 0.486);
 }
-
+/*Till here*/
 .attraction-cards {
     display: flex;
     flex-wrap: wrap;
     justify-content: center;
+    align-items: flex-start;
+    gap: 2.5rem;
+    width: 90%;
+    max-width: 1000px;
+    margin: 10vh auto;
 }
 
 .card {
-    background: white;
-    border: 1px solid #ddd;
-    border-radius: 5px;
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-    margin: 10px;
-    padding: 10px;
     width: 200px;
+    height: 550px;
     text-align: center;
+    background-image: linear-gradient(163deg, #00ff75 0%, #3700ff 100%);
+    border-radius: 20px;
+    transition: all .3s;
 }
 
-.card img {
+.card2 {
+    width: 200px;
+    height: 550px;
+    padding:10px;
+    background-color: #000000;
+    transition: all .2s;
+}
+
+.card2:hover {
+    transform: scale(0.98);
+    border-radius: 20px;
+}
+
+.card:hover {
+    box-shadow: 0px 0px 30px 1px rgba(0, 255, 117, 0.30);
+}
+
+/*till here*/
+.card .img-section{
+    width: 180px;
+    height: 180px;
+    align-items: center;
+    align-content: center;
+}
+
+.card .img-section img {
     max-width: 100%;
-    height: auto;
+    max-height: 100%;
+    border-radius: 15px;
+    border: 1px;
+    box-shadow: 0px 0px 10px 1px rgba(0, 255, 117, 0.30);
 }
 
 .card label {
+    -ms-overflow-style: none; 
+    scrollbar-width: none; 
+    overflow-y: scroll;
     font-weight: bold;
     margin-top: 10px;
     display: block;
+    height: 50px;
+    width: 180px;
+}
+/*here comes the shit*/
+.card .desbox p {
+    font-size: 14px;
+    color: #ffffff;
 }
 
-.card p {
-    font-size: 14px;
-    color: #555;
+.card .desbox {
+    -ms-overflow-style: none; 
+    scrollbar-width: none; 
+    overflow-y: scroll;
+    border-top: solid 3px rgb(255, 255, 255);
+    border-bottom: solid 3px rgb(255, 255, 255);
+    border-radius: 5px;
+    height: 250px;
+    width: 180px;
+    animation: scrollAnimation 15s linear infinite alternate;
+}
+
+.card .desbox::-webkit-scrollbar {
+    display: none; 
 }
 
 .card input[type="checkbox"] {
@@ -143,8 +200,8 @@ form button:hover {
     display: block;
     margin: 20px auto;
     padding: 10px 20px;
-    background-color: #007bff;
-    color: #fff;
+    background-color: #ffffff;
+    color: #000000;
     border: none;
     border-radius: 5px;
     cursor: pointer;
@@ -152,7 +209,7 @@ form button:hover {
 }
 
 .proceed-button:hover {
-    background-color: #0056b3;
+    background-color: #969696;
 }
 
 header {
