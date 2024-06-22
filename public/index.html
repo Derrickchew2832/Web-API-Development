@@ -25,11 +25,11 @@
   <div class="container">
     <h1>Travel Planner</h1>
     <form id="destinationForm">
-      <div class = "input-field">
+      <div class="input-field">
         <label for="destination">Enter Destination:</label>
         <input type="text" id="destination" name="destination" required>
       </div>
-      <br></br>
+      <br>
       <div class="button-wrapper">
         <button type="submit">Search</button>
       </div>
@@ -68,7 +68,11 @@
     });
 
     async function initMap() {
-      const { AdvancedMarkerElement } = await google.maps.importLibrary("marker");
+      // Ensure the Maps library is loaded correctly
+      if (!google.maps || !google.maps.Marker) {
+        console.error("Google Maps library not loaded correctly.");
+        return;
+      }
 
       document.getElementById('destinationForm').addEventListener('submit', async (e) => {
         e.preventDefault();
@@ -92,8 +96,10 @@
 
           const data = await response.json();
           if (response.ok) {
-            displayMap(data.map);
-            displayAttractions(data.attractions);
+            console.log('Attractions data:', data.attractions); // Debugging statement
+            const validAttractions = data.attractions.filter(attraction => attraction.photo && attraction.name && attraction.description);
+            displayMap(validAttractions); // Use filtered attractions data for map markers
+            displayAttractions(validAttractions); // Use filtered attractions data for display
           } else {
             alert(`Error: ${data.error}`);
           }
@@ -103,31 +109,49 @@
         }
       });
 
-      function displayMap(mapData) {
+      function displayMap(attractions) {
+        if (attractions.length === 0) {
+          alert('No attractions found.');
+          return;
+        }
+
+        console.log('First attraction:', attractions[0]); // Debugging statement
+
         const mapOptions = {
-          center: { lat: mapData.results[0].geometry.location.lat, lng: mapData.results[0].geometry.location.lng },
+          center: { lat: parseFloat(attractions[0].latitude), lng: parseFloat(attractions[0].longitude) },
           zoom: 12,
-          mapId: 'd6c2462d6114c70' // Replace with your actual map ID
+          mapId: 'd6c2462d6114c70'
         };
 
         const map = new google.maps.Map(document.getElementById('map'), mapOptions);
 
-        mapData.results.forEach(place => {
-          const content = document.createElement('div');
-          content.innerHTML = `<strong>${place.formatted_address}</strong>`;
-          content.style.padding = '5px';
-          content.style.backgroundColor = 'white';
-          content.style.border = '1px solid black';
-
-          try {
-            const marker = new AdvancedMarkerElement({
-              position: { lat: place.geometry.location.lat, lng: place.geometry.location.lng },
+        attractions.forEach(attraction => {
+          if (attraction.latitude && attraction.longitude) {
+            console.log('Marker for:', attraction.name, attraction.description); // Debugging statement
+            const marker = new google.maps.Marker({
               map: map,
-              title: place.formatted_address,
-              content: content
+              position: { lat: parseFloat(attraction.latitude), lng: parseFloat(attraction.longitude) },
+              title: attraction.name
             });
-          } catch (error) {
-            console.error('Error creating AdvancedMarkerElement for place:', place, error);
+
+            const infoWindow = new google.maps.InfoWindow({
+              content: `
+    <div style="padding: 10px; background-color: white; border-radius: 8px; box-shadow: 0 2px 6px rgba(0,0,0,0.3); max-width: 300px;">
+      <img src="${attraction.photo ? attraction.photo.images.small.url : 'default.jpg'}" alt="${attraction.name}" style="width: 100%; height: auto; border-radius: 4px;">
+      </div>
+      <h3 style="margin-top: 0; color: #333;">${attraction.name}</h3>
+      <p style="margin: 0; color: #555; font-size: 14px;">${attraction.description}</p>
+      <div style="margin-top: 10px;">
+    </div>
+  `
+            });
+
+
+            marker.addListener('click', () => {
+              infoWindow.open(map, marker);
+            });
+          } else {
+            console.warn('Invalid location data for attraction:', attraction); // Debugging statement
           }
         });
       }
@@ -138,10 +162,7 @@
         const container = document.createElement('div');
         container.className = 'attraction-cards';
 
-        const validAttractions = attractions.filter(attraction => attraction.photo && attraction.name && attraction.description);
-
-        validAttractions.forEach(attraction => {
-
+        attractions.forEach(attraction => {
           const card = document.createElement('div');
           card.className = 'card';
 
@@ -163,7 +184,7 @@
 
           const description = document.createElement('p');
           description.textContent = attraction.description || 'No description available';
-          
+
           const checkbox = document.createElement('input');
           checkbox.type = 'checkbox';
           checkbox.value = attraction.name;
@@ -215,10 +236,10 @@
     }
 
     // Initialize the map
-    initMap();
+    window.initMap = initMap;
   </script>
   <script async defer
-    src="https://maps.googleapis.com/maps/api/js?key=AIzaSyD9Msy5D_ZnVikL-7UemQsplpPDmTMOH30&libraries=marker&callback=initMap&v=weekly"></script>
+    src="https://maps.googleapis.com/maps/api/js?key=AIzaSyD9Msy5D_ZnVikL-7UemQsplpPDmTMOH30&libraries=places&callback=initMap&v=weekly"></script>
 </body>
 
 </html>
