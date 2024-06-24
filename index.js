@@ -31,6 +31,10 @@ app.use('/controllers', express.static(path.join(__dirname, 'controllers')));
 app.use(express.static(path.join(__dirname, 'public')));
 // Serve main page as the default
 app.get('/', (req, res) => {
+  res.redirect('/login');
+});
+
+app.get('/', (req, res) => {
   res.sendFile(__dirname + '/public/main.html');
 });
 
